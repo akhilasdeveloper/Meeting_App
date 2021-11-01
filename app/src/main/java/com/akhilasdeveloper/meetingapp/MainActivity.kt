@@ -64,7 +64,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        signIn()
+        binding.viewPager.adapter = MeetingViewPagerAdapter(supportFragmentManager,lifecycle)
+
+        //signIn()
 
     }
 
@@ -122,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         // List the next 10 events from the primary calendar.
         val now = DateTime(System.currentTimeMillis())
         val events: Events = calendar.events().list("primary")
+            .setTimeMin(now)
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .execute()
@@ -139,11 +142,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             withContext(Dispatchers.Main){
-                binding.recycler.apply {
+                /*binding.recycler.apply {
                     layoutManager = LinearLayoutManager(this@MainActivity)
                     setHasFixedSize(true)
                     adapter = MeetingRecyclerAdapter(events)
-                }
+                }*/
             }
         }
     }
