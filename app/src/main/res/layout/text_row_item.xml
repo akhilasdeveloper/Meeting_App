@@ -1,20 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="20dp"
+    android:clipToPadding="true"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="3dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello"
-        android:padding="20dp"
-        android:textSize="16sp"
-        android:id="@+id/textView"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/purple_200"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Meeting Title"
+                android:textStyle="bold"
+                android:textColor="@color/system_for"
+                android:textSize="18sp"
+                android:id="@+id/card_title"/>
 
-</LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:text="02 Nov, 2021"
+                android:textColor="@color/system_for"
+                android:textStyle="bold"
+                android:id="@+id/card_date"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:text="11:30 AM to 12:00 PM"
+                android:textColor="@color/system_for"
+                android:textStyle="bold"
+                android:id="@+id/card_meeting_time"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Organizer : Reception Unit 2"
+                android:textColor="@color/system_for"
+                android:id="@+id/card_organizer"/>
+
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>

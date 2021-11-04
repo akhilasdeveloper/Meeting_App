@@ -16,12 +16,11 @@ class MeetingRecyclerAdapter(private val dataSet: Events) :
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView
+        val meetingTitle: TextView = view.findViewById(R.id.card_title)
+        val meetingDate: TextView = view.findViewById(R.id.card_date)
+        val meetingTime: TextView = view.findViewById(R.id.card_meeting_time)
+        val meetingOrganizer: TextView = view.findViewById(R.id.card_organizer)
 
-        init {
-            // Define click listener for the ViewHolder's View.
-            textView = view.findViewById(R.id.textView)
-        }
     }
 
     // Create new views (invoked by the layout manager)
@@ -39,10 +38,17 @@ class MeetingRecyclerAdapter(private val dataSet: Events) :
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         var start = dataSet.items[position].start.dateTime
+        var end = dataSet.items[position].end.dateTime
         if (start == null) {
             start = dataSet.items[position].start.date
         }
-        viewHolder.textView.text = "${dataSet.items[position].summary} ${start.toString()}"
+        if (end == null) {
+            end = dataSet.items[position].end.date
+        }
+        viewHolder.meetingTitle.text = "${dataSet.items[position].summary}"
+        viewHolder.meetingOrganizer.text = "${dataSet.items[position].organizer.email}"
+        viewHolder.meetingDate.text = "${start.value}"
+        viewHolder.meetingTime.text = "${start.value} to ${end.value}"
     }
 
     // Return the size of your dataset (invoked by the layout manager)
