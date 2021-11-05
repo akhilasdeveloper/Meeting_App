@@ -52,6 +52,6 @@ class MeetingRecyclerAdapter(private val dataSet: Events) :
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = dataSet.items.size
 
 }
