@@ -5,9 +5,10 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.akhilasdeveloper.meetingapp.R
 import com.akhilasdeveloper.meetingapp.databinding.DetailsFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
-class SettingsFragment: Fragment(R.layout.settings_fragment) {
+@AndroidEntryPoint
+class SettingsFragment: BaseFragment(R.layout.settings_fragment) {
     private var _binding: DetailsFragmentBinding? = null
     private val binding get() = _binding!!
 

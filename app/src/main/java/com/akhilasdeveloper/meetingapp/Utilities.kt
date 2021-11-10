@@ -11,9 +11,10 @@ object Utilities {
         val hours = minutes / 60
         val days = hours / 24
 
-        val daysString = if (days<=0) "" else "$days Days, "
-        val hoursString = if ((hours % 24)<=0) "" else (hours % 24).toString() + " hours, "
-        val minutesString = if ((minutes % 60)<=0) "" else "and " + (minutes % 60).toString() + " minutes"
+        val daysString = if (days<=0) "" else "$days Day(s), "
+        val hoursString = if ((hours % 24)<=0) "" else (hours % 24).toString() + " hour(s), "
+        val and = if (daysString.isEmpty() and hoursString.isEmpty()) "" else "and "
+        val minutesString = if ((minutes % 60)<=0) "" else and + (minutes % 60).toString() + " minute(s)"
 
         return daysString + hoursString + minutesString
     }

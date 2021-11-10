@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Meeting App</string>
+    <string name="no_meeting">No Meeting</string>
+    <string name="no_upcoming_meeting">No upcoming meeting for today</string>
+    <string name="no_upcoming_events">No Upcoming Events</string>
+    <string name="upcoming_events">Upcoming Events</string>
+    <string name="next_meeting">Next meeting in %1$s</string>
+    <string name="organizer">Organizer : %1$s</string>
+    <string name="no_title">No Title</string>
+    <string name="no_organizer">Organizer not found</string>
+    <string name="current_event">Current Event</string>
+    <string name="show_all_events">Show All Events</string>
+    <string name="settings">Settings</string>
 </resources>
