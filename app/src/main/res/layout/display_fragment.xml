@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/first">
+    android:background="@color/first"
+    android:animateLayoutChanges="true">
 
     <LinearLayout
         android:id="@+id/display_fragment_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,6 +41,15 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:scaleY=".5"
+            app:indicatorColor="@color/end"
+            android:id="@+id/progress"
+            android:visibility="gone"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -75,11 +85,15 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:fontFamily="@font/open_sans_bold"
-            android:text="Meeting Name"
+            android:text="Current Event"
             android:textColor="@color/system_for"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:id="@+id/meeting_name"/>
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -90,13 +104,14 @@
             android:clipToPadding="true"
             app:cardCornerRadius="30dp"
             app:cardElevation="3dp"
-            android:id="@+id/meeting_card">
+            android:id="@+id/meeting_card"
+            android:animateLayoutChanges="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="40dp"
+                android:padding="20dp"
                 android:background="@drawable/main_background">
 
                 <TextView
@@ -104,11 +119,95 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/open_sans_bold"
-                    android:gravity="center"
-                    android:text="11:30 AM to 12:00 PM"
+                    android:text="Meeting Name"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:id="@+id/meeting_time"/>
+                    android:textSize="22sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:id="@+id/meeting_name"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:background="@color/white"
+                    android:layout_marginBottom="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Start"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:fontFamily="@font/open_sans_bold"
+                        android:textColor="@color/white" />
+
+                    <View
+                        android:layout_width=".5dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="End"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:fontFamily="@font/open_sans_bold"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:id="@+id/startTime"
+                        android:fontFamily="@font/open_sans"
+                        android:textColor="@color/white" />
+
+                    <View
+                        android:layout_width=".5dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="18sp"
+                        android:id="@+id/endTime"
+                        android:fontFamily="@font/open_sans"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:background="@color/white"
+                    android:layout_marginBottom="20dp" />
+
 
                 <TextView
                     android:layout_width="match_parent"
@@ -116,61 +215,23 @@
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/open_sans_bold"
                     android:gravity="center"
-                    android:text="Organizer : Reception Unit 2"
+                    android:textSize="16sp"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
                     android:id="@+id/meeting_organizer"/>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:background="@color/white"
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Next Meeting in 24 Hours and 14 Minutes"
-                    android:textColor="@color/white"
                     android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:id="@+id/next_meeting"/>
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:clipToPadding="true"
-            app:cardCornerRadius="30dp"
-            app:cardElevation="3dp"
-            android:id="@+id/meeting_card_empty"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="40dp"
-                android:background="@drawable/main_background">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/open_sans_bold"
-                    android:gravity="center"
-                    android:text="No Events"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Next Meeting in 24 Hours and 14 Minutes"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:id="@+id/next_meeting_empty"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -182,10 +243,10 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/open_sans_bold"
-            android:text="Upcoming Events"
             android:textColor="@color/system_for"
             android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:id="@+id/upcoming"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
@@ -199,13 +260,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Show All Events"
-            android:layout_margin="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
             app:backgroundTint="@color/start"
             app:cornerRadius="20dp"
             android:padding="20dp"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:id="@+id/showAll"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="20dp"
+            app:backgroundTint="@color/end"
+            app:cornerRadius="20dp"
+            android:padding="20dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:id="@+id/settings"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,4 +1,4 @@
-package com.akhilasdeveloper.meetingapp.fragments
+package com.akhilasdeveloper.meetingapp.ui.fragments
 
 import android.app.Activity
 import android.os.Bundle
@@ -11,9 +11,14 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.akhilasdeveloper.meetingapp.MeetingRecyclerAdapter
 import com.akhilasdeveloper.meetingapp.R
+import com.akhilasdeveloper.meetingapp.Utilities.formatDateToMillis
+import com.akhilasdeveloper.meetingapp.Utilities.formatMillis
+import com.akhilasdeveloper.meetingapp.Utilities.formatMillisDays
+import com.akhilasdeveloper.meetingapp.Utilities.formatMillisTime
 import com.akhilasdeveloper.meetingapp.databinding.DisplayFragmentBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -28,20 +33,17 @@ import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.Events
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.*
+import timber.log.Timber
 import java.util.*
 
 class DisplayFragment : Fragment(R.layout.display_fragment) {
     private var _binding: DisplayFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val TAG = "drive-quickstart"
-    private val APPLICATION_NAME = "Google Calendar API Java Quickstart"
+    private val APPLICATION_NAME = "Meeting App"
     private val JSON_FACTORY: JsonFactory = JacksonFactory.getDefaultInstance()
+    private var calendar: Calendar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,18 +57,32 @@ class DisplayFragment : Fragment(R.layout.display_fragment) {
             binding.displayFragmentView.updatePadding(bottom = systemWindows.bottom)
             return@setOnApplyWindowInsetsListener insets
         }
-
-        signIn()
+        CoroutineScope(Dispatchers.IO).launch {
+            authenticate(APPLICATION_NAME, CalendarScopes.CALENDAR_READONLY)
+        }
+        binding.meetingName.isSelected = true
+        binding.recycler.apply {
+            layoutManager = LinearLayoutManager(requireContext()).apply {
+                orientation = LinearLayoutManager.HORIZONTAL
+            }
+            setHasFixedSize(true)
+        }
+        binding.showAll.setOnClickListener {
+            findNavController().navigate(R.id.action_displayFragment_to_detailsFragment)
+        }
+        binding.settings.setOnClickListener {
+            findNavController().navigate(R.id.action_displayFragment_to_settingsFragment)
+        }
     }
 
-    private fun signIn() {
-        Log.i(TAG, "Start sign in")
+    private suspend fun signIn() {
+        Timber.d( "Start sign in")
         getSignInClient(CalendarScopes.CALENDAR_READONLY)?.let {
             resultLauncher.launch(it.signInIntent)
         }
     }
 
-    var resultLauncher =
+    private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -83,14 +99,12 @@ class DisplayFragment : Fragment(R.layout.display_fragment) {
     }
 
     private suspend fun authenticate(appName: String?, scopeName: String?): Boolean {
-        val signInAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
-        withContext(Dispatchers.Main) {
-            Toast.makeText(
-                requireContext(),
-                "** Silent ${signInAccount?.email}",
-                Toast.LENGTH_SHORT
-            ).show()
+
+        withContext(Dispatchers.Main){
+            binding.progress.visibility = View.VISIBLE
         }
+        val signInAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
+        Timber.d("Signed in as ${signInAccount?.email}")
         if (signInAccount != null) {
             val accountCredential: GoogleAccountCredential = GoogleAccountCredential.usingOAuth2(
                 requireContext(),
@@ -104,29 +118,40 @@ class DisplayFragment : Fragment(R.layout.display_fragment) {
                     accountCredential
                 )
             driveBuilder.applicationName = appName
-            val calendar = driveBuilder.build()
-            fetchDetails(calendar)
+            calendar = driveBuilder.build()
+            fetchDetails(calendar!!)
             return true
+        } else {
+            signIn()
         }
         return false
     }
 
     private suspend fun fetchDetails(calendar: Calendar) {
 
-        // List the next 10 events from the primary calendar.
+        Timber.d( "Called fetchDetails ${System.currentTimeMillis()}")
 
-        // List the next 10 events from the primary calendar.
-        //val now = DateTime(System.currentTimeMillis())
         val events: Events = calendar.events().list("primary")
             .setTimeMin(DateTime(formatDateToMillis(formatMillis(System.currentTimeMillis()))!!))
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .execute()
+
         val items = events.items
+
+        withContext(Dispatchers.Main){
+            binding.progress.visibility = View.GONE
+        }
+
         if (items.isEmpty()) {
-            println("** No upcoming events found.")
+            Timber.d( "No upcoming events found")
+            withContext(Dispatchers.Main) {
+                binding.upcoming.text = "No Upcoming Events"
+            }
         } else {
-            println("** Upcoming events ${items.size}")
+            withContext(Dispatchers.Main) {
+                binding.upcoming.text = "Upcoming Events"
+            }
             var currEvent: Event? = null
             var nextEvent: Event? = null
             for (event in items) {
@@ -147,43 +172,38 @@ class DisplayFragment : Fragment(R.layout.display_fragment) {
                     if (start.value > System.currentTimeMillis())
                         nextEvent = event
 
-                System.out.printf("** %s (%s)\n", event.summary, start)
             }
 
             withContext(Dispatchers.Main) {
-
                 setMeeting(currEvent, nextEvent)
-
-                binding.recycler.apply {
-                    layoutManager = LinearLayoutManager(requireContext()).apply {
-                        orientation = LinearLayoutManager.HORIZONTAL
-                    }
-                    setHasFixedSize(true)
-                    adapter = MeetingRecyclerAdapter(events)
-                }
+                binding.recycler.adapter = MeetingRecyclerAdapter(events)
             }
         }
     }
 
     private fun setMeeting(currEvent: Event?, nextEvent: Event?) {
         if (currEvent == null) {
-            binding.meetingName.visibility = View.GONE
-            binding.meetingCard.visibility = View.GONE
-            binding.meetingCardEmpty.visibility = View.VISIBLE
+            binding.startTime.visibility = View.GONE
+            binding.endTime.visibility = View.GONE
+            binding.meetingOrganizer.visibility = View.GONE
+
+            binding.meetingName.text = "No Meeting"
+
             if (nextEvent == null)
-                binding.nextMeetingEmpty.text = "No upcoming meeting for today"
+                binding.nextMeeting.text = "No upcoming meeting for today"
             else {
                 var start = nextEvent.start.dateTime
                 if (start == null) {
                     start = nextEvent.start.date
                 }
-                binding.nextMeetingEmpty.text =
+                binding.nextMeeting.text =
                     "Next meeting in ${formatMillisDays(start.value - System.currentTimeMillis())}"
             }
         } else {
             binding.meetingName.visibility = View.VISIBLE
-            binding.meetingCard.visibility = View.VISIBLE
-            binding.meetingCardEmpty.visibility = View.GONE
+            binding.startTime.visibility = View.VISIBLE
+            binding.endTime.visibility = View.VISIBLE
+            binding.meetingOrganizer.visibility = View.VISIBLE
 
             var start = currEvent.start.dateTime
             var end = currEvent.end.dateTime
@@ -194,8 +214,9 @@ class DisplayFragment : Fragment(R.layout.display_fragment) {
                 end = currEvent.end.date
             }
 
-            binding.meetingName.text = currEvent.summary
-            binding.meetingTime.text = "From ${formatMillisTime(start.value)} to ${formatMillisTime(end.value)}"
+            binding.meetingName.text = currEvent.summary ?: "No title"
+            binding.startTime.text = "${formatMillisTime(start.value)}"
+            binding.endTime.text = "${formatMillisTime(end.value)}"
             binding.meetingOrganizer.text = "Organizer : " + currEvent.organizer.email
 
             if (nextEvent == null)
@@ -212,34 +233,20 @@ class DisplayFragment : Fragment(R.layout.display_fragment) {
         }
     }
 
-    private fun formatMillisDays(millis: Long): String {
-        val seconds: Long = millis / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
-        val days = hours / 24
+    override fun onStart() {
+        super.onStart()
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                withContext(Dispatchers.Main){
+                    binding.progress.visibility = View.VISIBLE
+                }
 
-        val daysString = if (days<=0) "" else "$days Days, "
-        val hoursString = if ((hours % 24)<=0) "" else (hours % 24).toString() + " hours, "
-        val minutesString = if ((minutes % 60)<=0) "" else "and " + (minutes % 60).toString() + " minutes"
-
-        return daysString + hoursString + minutesString
+                calendar?.let {
+                    fetchDetails(it)
+                }
+                delay((1000 * 60).toLong())
+            }
+        }
     }
 
-    private fun formatMillis(millis: Long): String {
-        val pattern = "yyyy-MM-dd"
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
-        return formatter.format(Date(millis))
-    }
-
-    private fun formatMillisTime(millis: Long): String {
-        val pattern = "hh:MM a"
-        val formatter = SimpleDateFormat(pattern, Locale.US)
-        return formatter.format(Date(millis))
-    }
-
-    private fun formatDateToMillis(date: String):Long? {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val parsedDate = dateFormat.parse(date)
-        return parsedDate?.time
-    }
 }

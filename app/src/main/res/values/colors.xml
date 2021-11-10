@@ -18,6 +18,8 @@
     <color name="light_for">#E1E1E1</color>
     <color name="date">#333333</color>
     <color name="start">#d81921</color>
+    <color name="startForFont">#d81921</color>
     <color name="end">#F9631E</color>
+    <color name="endForFont">#F9631E</color>
 
 </resources>

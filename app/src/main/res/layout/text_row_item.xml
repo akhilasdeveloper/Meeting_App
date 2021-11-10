@@ -20,38 +20,115 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:text="Meeting Title"
-                android:textStyle="bold"
+                android:singleLine="true"
+                android:fontFamily="@font/open_sans_bold"
                 android:textColor="@color/system_for"
                 android:textSize="18sp"
                 android:id="@+id/card_title"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:background="@color/system_for"
+                android:layout_marginBottom="10dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:gravity="center"
                 android:text="02 Nov, 2021"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"
                 android:textColor="@color/system_for"
                 android:textStyle="bold"
                 android:id="@+id/card_date"/>
 
-            <TextView
+            <View
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:background="@color/system_for"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:gravity="center"
-                android:text="11:30 AM to 12:00 PM"
-                android:textColor="@color/system_for"
-                android:textStyle="bold"
-                android:id="@+id/card_meeting_time"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Start"
+                    android:gravity="center"
+                    android:fontFamily="@font/open_sans_bold"
+                    android:textColor="@color/system_for"/>
+
+                <View
+                    android:layout_width=".5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/system_for" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="End"
+                    android:gravity="center"
+                    android:fontFamily="@font/open_sans_bold"
+                    android:textColor="@color/system_for"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="11:30 AM"
+                    android:gravity="center"
+                    android:textColor="@color/system_for"
+                    android:textStyle="bold"
+                    android:id="@+id/card_meeting_from_time"/>
+
+                <View
+                    android:layout_width=".5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/system_for" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="12:00 PM"
+                    android:gravity="center"
+                    android:textColor="@color/system_for"
+                    android:textStyle="bold"
+                    android:id="@+id/card_meeting_to_time"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:background="@color/system_for"
+                android:layout_marginBottom="10dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:text="Organizer : Reception Unit 2"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
                 android:textColor="@color/system_for"
                 android:id="@+id/card_organizer"/>
 

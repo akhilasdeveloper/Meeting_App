@@ -18,7 +18,8 @@ class MeetingRecyclerAdapter(private val dataSet: Events) :
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val meetingTitle: TextView = view.findViewById(R.id.card_title)
         val meetingDate: TextView = view.findViewById(R.id.card_date)
-        val meetingTime: TextView = view.findViewById(R.id.card_meeting_time)
+        val meetingFromTime: TextView = view.findViewById(R.id.card_meeting_from_time)
+        val meetingToTime: TextView = view.findViewById(R.id.card_meeting_to_time)
         val meetingOrganizer: TextView = view.findViewById(R.id.card_organizer)
 
     }
@@ -45,10 +46,16 @@ class MeetingRecyclerAdapter(private val dataSet: Events) :
         if (end == null) {
             end = dataSet.items[position].end.date
         }
-        viewHolder.meetingTitle.text = "${dataSet.items[position].summary}"
-        viewHolder.meetingOrganizer.text = "${dataSet.items[position].organizer.email}"
-        viewHolder.meetingDate.text = "${start.value}"
-        viewHolder.meetingTime.text = "${start.value} to ${end.value}"
+        viewHolder.meetingOrganizer.isSelected = true
+        viewHolder.meetingTitle.text = "${dataSet.items[position].summary?:"No title"}"
+        viewHolder.meetingOrganizer.text = "Organizer : ${dataSet.items[position].organizer.email}"
+        viewHolder.meetingDate.text = "Date : ${Utilities.formatMillis(start.value)}"
+        viewHolder.meetingFromTime.text = "${Utilities.formatMillisTime(start.value)}"
+        viewHolder.meetingToTime.text = "${
+            Utilities.formatMillisTime(
+                end.value
+            )
+        }"
     }
 
     // Return the size of your dataset (invoked by the layout manager)
