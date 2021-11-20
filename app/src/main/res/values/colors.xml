@@ -22,4 +22,6 @@
     <color name="end">#F9631E</color>
     <color name="endForFont">#F9631E</color>
 
+    <color name="track">#fafafa</color>
+
 </resources>

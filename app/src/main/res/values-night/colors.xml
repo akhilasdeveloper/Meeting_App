@@ -22,4 +22,6 @@
     <color name="end">#78300F</color>
     <color name="endForFont">#F4D1C0</color>
 
+    <color name="track">#2B2B2B</color>
+
 </resources>

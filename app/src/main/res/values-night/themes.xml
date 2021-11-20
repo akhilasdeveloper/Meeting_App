@@ -15,6 +15,7 @@
         <item name="android:fontFamily">@font/open_sans</item>
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
+
     <style name="tool_bar_title" parent="@style/Base.TextAppearance.AppCompat.Title">
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>

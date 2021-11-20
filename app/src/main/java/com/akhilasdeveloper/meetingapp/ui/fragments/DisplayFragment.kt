@@ -43,8 +43,6 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
     @Inject
     lateinit var jsonFactory: JacksonFactory
 
-    private var calendar: Calendar? = null
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DisplayFragmentBinding.bind(view)
@@ -52,6 +50,19 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         init()
         clickListeners()
         initSignIn()
+        subscribeObservers()
+    }
+
+    private fun subscribeObservers() {
+        viewModel.dataStateCalendar.observe(viewLifecycleOwner, {
+            it?.let {
+                viewModel.getEvents(it, "startTime")
+            }
+        })
+
+        viewModel.dataStateEvents.observe(viewLifecycleOwner, {
+            setUI(it)
+        })
     }
 
     private fun initSignIn() {
@@ -61,19 +72,14 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
             Timber.d("Signed in as ${signInAccount.email}")
 
-            CoroutineScope(Dispatchers.IO).launch {
-                authenticate(
-                    getString(R.string.app_name),
-                    CalendarScopes.CALENDAR_READONLY,
-                    signInAccount
-                )
-            }
-
+            authenticate(
+                signInAccount
+            )
         } else {
 
             Timber.d("Not Signed In")
 
-            getSignInClient(CalendarScopes.CALENDAR_READONLY)?.let {
+            getSignInClient()?.let {
                 resultLauncher.launch(it.signInIntent)
             }
 
@@ -115,22 +121,20 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             }
         }
 
-    private fun getSignInClient(scopeName: String): GoogleSignInClient? {
+    private fun getSignInClient(): GoogleSignInClient? {
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        if (scopeName.isNotEmpty()) signInOptions.requestScopes(Scope(scopeName))
+        signInOptions.requestScopes(Scope(CalendarScopes.CALENDAR_READONLY))
         signInOptions.requestEmail()
         return GoogleSignIn.getClient(requireActivity(), signInOptions.build())
     }
 
-    private suspend fun authenticate(
-        appName: String?,
-        scopeName: String?,
+    private fun authenticate(
         signInAccount: GoogleSignInAccount
     ) {
 
         val accountCredential: GoogleAccountCredential = GoogleAccountCredential.usingOAuth2(
             requireContext(),
-            Collections.singleton(scopeName)
+            Collections.singleton(CalendarScopes.CALENDAR_READONLY)
         )
 
         accountCredential.selectedAccount = signInAccount.account
@@ -140,13 +144,14 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
                 jsonFactory,
                 accountCredential
             )
-        driveBuilder.applicationName = appName
-        calendar = driveBuilder.build()
+        driveBuilder.applicationName = getString(R.string.app_name)
 
-        fetchDetails(calendar!!)
+        viewModel.setCalendar(driveBuilder.build())
+
+//        fetchDetails(calendar!!)
     }
 
-    private suspend fun fetchDetails(calendar: Calendar) {
+    /*private suspend fun fetchDetails(calendar: Calendar) {
 
         Timber.d("Called fetchDetails ${System.currentTimeMillis()}")
 
@@ -159,7 +164,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         withContext(Dispatchers.Main) {
             setUI(events)
         }
-    }
+    }*/
 
     private fun setUI(events: Events) {
 
@@ -218,7 +223,10 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
                 if (start == null) {
                     start = nextEvent.start.date
                 }
-                binding.nextMeeting.text = getString(R.string.next_meeting, formatMillisDays(start.value - System.currentTimeMillis()))
+                binding.nextMeeting.text = getString(
+                    R.string.next_meeting,
+                    formatMillisDays(start.value - System.currentTimeMillis())
+                )
             }
         } else {
             binding.meetingTimeLayout.root.visibility = View.VISIBLE
@@ -235,21 +243,29 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
             binding.meetingName.text = currEvent.summary ?: getString(R.string.no_title)
             binding.meetingTimeLayout.startTime.text = formatMillisTime(start.value)
-            binding.meetingTimeLayout.endTime.text = formatMillisTime(end.value)}
-            binding.meetingTimeLayout.meetingOrganizer.text = getString(R.string.organizer ,  currEvent?.organizer?.email?:getString(R.string.no_organizer))
+            binding.meetingTimeLayout.endTime.text = formatMillisTime(end.value)
+        }
+        binding.meetingTimeLayout.meetingOrganizer.text = getString(
+            R.string.organizer,
+            currEvent?.organizer?.email ?: getString(R.string.no_organizer)
+        )
 
-            if (nextEvent == null)
-                binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
-            else {
-                var start = nextEvent.start.dateTime
-                if (start == null) {
-                    start = nextEvent.start.date
-                }
-                binding.nextMeeting.text =getString(R.string.next_meeting, formatMillisDays(start.value - System.currentTimeMillis()))
+        if (nextEvent == null)
+            binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
+        else {
+            var start = nextEvent.start.dateTime
+            if (start == null) {
+                start = nextEvent.start.date
             }
-
+            binding.nextMeeting.text = getString(
+                R.string.next_meeting,
+                formatMillisDays(start.value - System.currentTimeMillis())
+            )
         }
 
+    }
+
+/*
 
     override fun onStart() {
         super.onStart()
@@ -259,12 +275,13 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
                     binding.progress.visibility = View.VISIBLE
                 }
 
-                calendar?.let {
-                    fetchDetails(it)
+                viewModel.dataStateCalendar.value?.let {
+                    viewModel.getEvents(it,"startTime")
                 }
                 delay(REFRESH_DELAY)
             }
         }
     }
+*/
 
 }

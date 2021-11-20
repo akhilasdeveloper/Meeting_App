@@ -5,6 +5,8 @@ import java.util.*
 
 object Utilities {
 
+    val DAY_MILLIS: Long = (1000 * 60 * 60 * 24).toLong()
+
     fun formatMillisDays(millis: Long): String {
         val seconds: Long = millis / 1000
         val minutes = seconds / 60
@@ -36,5 +38,13 @@ object Utilities {
         val parsedDate = dateFormat.parse(date)
         return parsedDate?.time
     }
+
+    private fun formatTimeToMillis(time: String):Long? {
+        val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val parsedDate = dateFormat.parse(time)
+        return parsedDate?.time
+    }
+
+    fun stripTime(time:Long) = formatTimeToMillis(formatMillisTime(time))
 
 }
