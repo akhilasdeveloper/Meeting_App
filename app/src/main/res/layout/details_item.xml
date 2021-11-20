@@ -7,10 +7,6 @@
     app:cardCornerRadius="20dp"
     app:contentPadding="10dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,6 +19,7 @@
                 android:fontFamily="@font/open_sans_bold"
                 android:gravity="center"
                 android:text="Meeting Name"
+                android:textSize="18sp"
                 android:id="@+id/meeting_name_details"
                 android:textColor="@color/system_for"
                 android:textStyle="bold" />
@@ -30,8 +27,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
-                android:background="@color/system_for"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:background="@color/system_for" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,28 +47,19 @@
                     android:textStyle="bold"
                     android:layout_margin="10dp"/>
 
-                <View
-                    android:layout_width=".5dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/system_for"
-                    android:layout_margin="10dp"/>
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
 
-                    <!--<com.google.android.material.card.MaterialCardView
-                        android:id="@+id/materialCardViewBg"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        app:cardBackgroundColor="@color/track"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                    <include
+                        layout="@layout/time_scale_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />-->
+                        app:layout_constraintTop_toTopOf="@+id/materialCardView" />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline_from"
@@ -87,7 +75,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         app:cardBackgroundColor="@color/end"
-                        app:cardCornerRadius="20dp"
+                        app:cardCornerRadius="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/guideline_to"
                         app:layout_constraintStart_toStartOf="@+id/guideline_from"
@@ -110,12 +98,6 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <View
-                    android:layout_width=".5dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/system_for"
-                    android:layout_margin="10dp"/>
-
                 <TextView
                     android:id="@+id/meeting_to_details"
                     android:layout_width="wrap_content"
@@ -127,8 +109,22 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:layout_margin="10dp"
+                android:background="@color/system_for" />
+
+            <TextView
+                android:id="@+id/meeting_room_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Meeting room : INCEPTION ZONE"
+                android:layout_margin="10sp"
+                android:textColor="@color/system_for"/>
+
         </LinearLayout>
 
-    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

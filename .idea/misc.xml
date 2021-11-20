@@ -15,7 +15,7 @@
         <entry key="app/src/main/res/drawable/time_scale_background.xml" value="0.26614583333333336" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/details_fragment.xml" value="0.2818590704647676" />
-        <entry key="app/src/main/res/layout/details_item.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/details_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/details_item1.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/details_item2.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/details_item3.xml" value="0.35260416666666666" />
@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/text_row_item.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/time_scale_layout.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/time_scale_line_half_layout.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/time_scale_line_layout.xml" value="0.25" />
       </map>
     </option>
