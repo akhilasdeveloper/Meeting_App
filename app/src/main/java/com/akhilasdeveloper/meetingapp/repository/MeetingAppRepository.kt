@@ -12,9 +12,11 @@ import javax.inject.Inject
 class MeetingAppRepository @Inject constructor() {
 
     suspend fun fetchDetails(calendar: Calendar, orderBy: String) = flow<Events> {
+        val time = Utilities.formatDateToMillis(Utilities.formatMillis(System.currentTimeMillis()))!!
         emit(
             calendar.events().list("primary")
-                .setTimeMin(DateTime(Utilities.formatDateToMillis(Utilities.formatMillis(System.currentTimeMillis()))!!))
+                .setTimeMin(DateTime(time))
+                .setTimeMax(DateTime(time + Utilities.DAY_MILLIS))
                 .setOrderBy(orderBy)
                 .setSingleEvents(true)
                 .execute()
