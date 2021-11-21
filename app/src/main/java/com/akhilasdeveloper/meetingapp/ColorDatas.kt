@@ -30,6 +30,21 @@ class ColorDatas(val context: Context) {
             start = ContextCompat.getColor(context, R.color.start4),
             end = ContextCompat.getColor(context, R.color.end4),
             font = ContextCompat.getColor(context, R.color.font4)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start5),
+            end = ContextCompat.getColor(context, R.color.end5),
+            font = ContextCompat.getColor(context, R.color.font5)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start6),
+            end = ContextCompat.getColor(context, R.color.end6),
+            font = ContextCompat.getColor(context, R.color.font6)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start7),
+            end = ContextCompat.getColor(context, R.color.end7),
+            font = ContextCompat.getColor(context, R.color.font7)
         )
     )
 }

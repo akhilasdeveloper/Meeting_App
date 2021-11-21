@@ -29,9 +29,13 @@ class MainViewModel
     private val _dataStateEvents: MutableLiveData<Events> = MutableLiveData()
     private val _dataStateEventData: MutableLiveData<List<EventData>> = MutableLiveData()
     private val _dataStateCalendar: MutableLiveData<Calendar?> = MutableLiveData()
+    private val _dataStateLoading: MutableLiveData<Boolean> = MutableLiveData()
 
     val dataStateEvents: LiveData<Events>
         get() = _dataStateEvents
+
+    val dataStateLoading: LiveData<Boolean>
+        get() = _dataStateLoading
 
     val dataStateCalendar: LiveData<Calendar?>
         get() = _dataStateCalendar
@@ -54,6 +58,8 @@ class MainViewModel
     fun getEventData(calendar: Calendar, orderBy: String){
         viewModelScope.launch {
             while (true) {
+
+                setLoading(true)
 
                 val meetingRooms = generateMeetingRooms.fetchMeetingData()
 
@@ -79,6 +85,7 @@ class MainViewModel
                             endPer = getEndPer(endTime, startDay, endDay)
                         )
                     }
+                    setLoading(false)
                     _dataStateEventData.value = data
                 }
                 delay(Constants.REFRESH_DELAY)
@@ -142,6 +149,12 @@ class MainViewModel
     fun setCalendar(calendar: Calendar){
         CoroutineScope(Dispatchers.Main).launch {
             _dataStateCalendar.value = calendar
+        }
+    }
+
+    fun setLoading(boolean: Boolean){
+        CoroutineScope(Dispatchers.Main).launch {
+            _dataStateLoading.value = boolean
         }
     }
 

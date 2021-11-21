@@ -60,5 +60,6 @@ class DetailsFragment: BaseFragment(R.layout.details_fragment) {
             }
             setHasFixedSize(true)
         }
+
     }
 }

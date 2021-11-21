@@ -71,6 +71,10 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         viewModel.dataStateEventData.observe(viewLifecycleOwner, {
             setUI(it)
         })
+
+        viewModel.dataStateLoading.observe(viewLifecycleOwner, {
+            binding.progress.visibility = if (it) View.VISIBLE else View.GONE
+        })
     }
 
     private fun initSignIn() {
@@ -124,6 +128,10 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
        viewLifecycleOwner.lifecycleScope.launch {
            binding.meetingRoomTitle.text = generateMeetingRooms.fetchDefaultMeetingRoomName()
            setUIColor(generateMeetingRooms.fetchDefaultMeetingRoomCol1())
+           val startColor = generateMeetingRooms.fetchDefaultMeetingRoomCol1()
+           val i = if (colorDatas.colors.size <= startColor) 0 else startColor
+           val colorData = colorDatas.colors[i]
+           binding.progress.setIndicatorColor(colorData.start)
        }
     }
 
@@ -206,7 +214,6 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
     private fun setUI(events: List<EventData>) {
 
-        binding.progress.visibility = View.GONE
 
         if (events.isEmpty()) {
             Timber.d("No upcoming events found")

@@ -47,7 +47,10 @@ class GenerateMeetingRooms(val context: Context, val gson: Gson) {
             Utilities.MEETING_ROOM_DATASTORE_KEY,
             gson.toJson(MeetingRoomData(updated))
         )
+        if (meetingRoom.name == fetchDefaultMeetingRoomName())
+            updateDefaultMeetingRoom(meetingRoom)
     }
+
     suspend fun deleteMeetingRoom(meetingRoom: MeetingRoom) {
         val data = fetchMeetingData().meeting_rooms.toMutableList()
         data.removeAll { it -> it.id == meetingRoom.id }
