@@ -7,12 +7,10 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Guideline
 import androidx.recyclerview.widget.RecyclerView
 import com.akhilasdeveloper.meetingapp.Utilities.DAY_MILLIS
-import com.google.api.services.calendar.Calendar
-import com.google.api.services.calendar.model.Event
-import com.google.api.services.calendar.model.Events
+import com.akhilasdeveloper.meetingapp.data.EventData
 import timber.log.Timber
 
-class MeetingListRecyclerAdapter(private val dataSet: List<Event>) :
+class MeetingListRecyclerAdapter(private val dataSet: List<EventData>) :
     RecyclerView.Adapter<MeetingListRecyclerAdapter.ViewHolder>() {
 
     /**
@@ -42,42 +40,16 @@ class MeetingListRecyclerAdapter(private val dataSet: List<Event>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        var start = dataSet[position].start.dateTime
-        var end = dataSet[position].end.dateTime
-        if (start == null) {
-            start = dataSet[position].start.date
-        }
-        if (end == null) {
-            end = dataSet[position].end.date
-        }
 
-        val startDay = Utilities.formatDateToMillis(Utilities.formatMillis(start.value))!!
-        val endDay = Utilities.formatDateToMillis(Utilities.formatMillis(end.value))!! + DAY_MILLIS
-        val dayDiff = endDay - startDay
-        val startDayDiff = start.value - startDay
-        val endDayDiff = end.value - startDay
-        val startPer = if (dayDiff == 0L) 0f else startDayDiff.toFloat() / dayDiff.toFloat()
-        val endPer = if (dayDiff == 0L) 0f else endDayDiff.toFloat() / dayDiff.toFloat()
-
-        Timber.d("MeetingListRecyclerAdapter startDay : $startDay : ${Utilities.formatMillis(startDay)}")
-        Timber.d("MeetingListRecyclerAdapter start : ${start.value} : ${Utilities.formatMillis(start.value)}")
-        Timber.d("MeetingListRecyclerAdapter end : ${end.value} : ${Utilities.formatMillis(end.value)}")
-        Timber.d("MeetingListRecyclerAdapter endDay : $endDay : ${Utilities.formatMillis(endDay)}")
-        Timber.d("MeetingListRecyclerAdapter dayDiff : $dayDiff : ${Utilities.formatMillis(dayDiff)}")
-        Timber.d("MeetingListRecyclerAdapter startDayDiff : $startDayDiff : ${Utilities.formatMillis(startDayDiff)}")
-        Timber.d("MeetingListRecyclerAdapter endDayDiff : $endDayDiff : ${Utilities.formatMillis(endDayDiff)}")
-        Timber.d("MeetingListRecyclerAdapter startPer : $startPer")
-        Timber.d("MeetingListRecyclerAdapter endPer : $endPer")
-
-        viewHolder.meetingTitle.text = "${dataSet[position].summary?:"No title"}"
-        viewHolder.meetingFrom.text = "${Utilities.formatMillisTime(start.value)}"
+        viewHolder.meetingTitle.text = dataSet[position].title
+        viewHolder.meetingFrom.text = "${Utilities.formatMillisTime(dataSet[position].startTime)}"
         viewHolder.meetingTo.text = "${
             Utilities.formatMillisTime(
-                end.value
+                dataSet[position].endTime
             )
         }"
-        viewHolder.meetingGuideFrom.setGuidelinePercent(startPer)
-        viewHolder.meetingGuideTo.setGuidelinePercent(endPer)
+        viewHolder.meetingGuideFrom.setGuidelinePercent(dataSet[position].startPer)
+        viewHolder.meetingGuideTo.setGuidelinePercent(dataSet[position].endPer)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

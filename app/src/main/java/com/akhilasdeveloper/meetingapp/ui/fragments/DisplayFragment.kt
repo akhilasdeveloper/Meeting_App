@@ -10,24 +10,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.akhilasdeveloper.meetingapp.GenerateMeetingRooms
 import com.akhilasdeveloper.meetingapp.MeetingRecyclerAdapter
 import com.akhilasdeveloper.meetingapp.R
-import com.akhilasdeveloper.meetingapp.Utilities.formatDateToMillis
-import com.akhilasdeveloper.meetingapp.Utilities.formatMillis
 import com.akhilasdeveloper.meetingapp.Utilities.formatMillisDays
 import com.akhilasdeveloper.meetingapp.Utilities.formatMillisTime
+import com.akhilasdeveloper.meetingapp.data.EventData
 import com.akhilasdeveloper.meetingapp.databinding.DisplayFragmentBinding
-import com.akhilasdeveloper.meetingapp.ui.Constants.REFRESH_DELAY
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
-import com.google.api.services.calendar.model.Event
-import com.google.api.services.calendar.model.Events
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -43,6 +39,9 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
     @Inject
     lateinit var jsonFactory: JacksonFactory
 
+    @Inject
+    lateinit var generateMeetingRooms: GenerateMeetingRooms
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DisplayFragmentBinding.bind(view)
@@ -56,11 +55,11 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
     private fun subscribeObservers() {
         viewModel.dataStateCalendar.observe(viewLifecycleOwner, {
             it?.let {
-                viewModel.getEvents(it, "startTime")
+                viewModel.getEventData(it, "startTime")
             }
         })
 
-        viewModel.dataStateEvents.observe(viewLifecycleOwner, {
+        viewModel.dataStateEventData.observe(viewLifecycleOwner, {
             setUI(it)
         })
     }
@@ -112,6 +111,9 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             }
             setHasFixedSize(true)
         }
+
+        generateMeetingRooms.getMeetingRooms()
+
     }
 
     private var resultLauncher =
@@ -166,12 +168,11 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         }
     }*/
 
-    private fun setUI(events: Events) {
+    private fun setUI(events: List<EventData>) {
 
-        val items = events.items
         binding.progress.visibility = View.GONE
 
-        if (items.isEmpty()) {
+        if (events.isEmpty()) {
             Timber.d("No upcoming events found")
             binding.upcoming.text = getString(R.string.no_upcoming_meeting)
             binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
@@ -181,24 +182,16 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         } else {
             binding.upcoming.text = getString(R.string.upcoming_events)
 
-            var currEvent: Event? = null
-            var nextEvent: Event? = null
-            for (event in items) {
-                var start = event.start.dateTime
-                var end = event.end.dateTime
-                if (start == null) {
-                    start = event.start.date
-                }
-                if (end == null) {
-                    end = event.end.date
-                }
+            var currEvent: EventData? = null
+            var nextEvent: EventData? = null
+            for (event in events) {
 
                 if (currEvent == null)
-                    if (start.value <= System.currentTimeMillis() && end.value >= System.currentTimeMillis())
+                    if (event.startTime <= System.currentTimeMillis() && event.endTime >= System.currentTimeMillis())
                         currEvent = event
 
                 if (nextEvent == null)
-                    if (start.value > System.currentTimeMillis())
+                    if (event.startTime > System.currentTimeMillis())
                         nextEvent = event
 
             }
@@ -209,7 +202,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         }
     }
 
-    private fun setMeeting(currEvent: Event?, nextEvent: Event?) {
+    private fun setMeeting(currEvent: EventData?, nextEvent: EventData?) {
         if (currEvent == null) {
             binding.meetingTimeLayout.root.visibility = View.GONE
             binding.meetingTimeLayout.meetingOrganizer.visibility = View.GONE
@@ -219,47 +212,30 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             if (nextEvent == null)
                 binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
             else {
-                var start = nextEvent.start.dateTime
-                if (start == null) {
-                    start = nextEvent.start.date
-                }
                 binding.nextMeeting.text = getString(
                     R.string.next_meeting,
-                    formatMillisDays(start.value - System.currentTimeMillis())
+                    formatMillisDays(nextEvent.startTime - System.currentTimeMillis())
                 )
             }
         } else {
             binding.meetingTimeLayout.root.visibility = View.VISIBLE
             binding.meetingTimeLayout.meetingOrganizer.visibility = View.VISIBLE
 
-            var start = currEvent.start.dateTime
-            var end = currEvent.end.dateTime
-            if (start == null) {
-                start = currEvent.start.date
-            }
-            if (end == null) {
-                end = currEvent.end.date
-            }
-
-            binding.meetingName.text = currEvent.summary ?: getString(R.string.no_title)
-            binding.meetingTimeLayout.startTime.text = formatMillisTime(start.value)
-            binding.meetingTimeLayout.endTime.text = formatMillisTime(end.value)
+            binding.meetingName.text = currEvent.title
+            binding.meetingTimeLayout.startTime.text = formatMillisTime(currEvent.startTime)
+            binding.meetingTimeLayout.endTime.text = formatMillisTime(currEvent.endTime)
         }
         binding.meetingTimeLayout.meetingOrganizer.text = getString(
             R.string.organizer,
-            currEvent?.organizer?.email ?: getString(R.string.no_organizer)
+            currEvent?.organizerEmail?: getString(R.string.no_organizer)
         )
 
         if (nextEvent == null)
             binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
         else {
-            var start = nextEvent.start.dateTime
-            if (start == null) {
-                start = nextEvent.start.date
-            }
             binding.nextMeeting.text = getString(
                 R.string.next_meeting,
-                formatMillisDays(start.value - System.currentTimeMillis())
+                formatMillisDays(nextEvent.startTime - System.currentTimeMillis())
             )
         }
 

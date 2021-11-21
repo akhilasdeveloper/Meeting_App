@@ -6,13 +6,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.akhilasdeveloper.meetingapp.MeetingListRecyclerAdapter
-import com.akhilasdeveloper.meetingapp.MeetingRecyclerAdapter
 import com.akhilasdeveloper.meetingapp.R
+import com.akhilasdeveloper.meetingapp.data.EventData
 import com.akhilasdeveloper.meetingapp.databinding.DetailsFragmentBinding
-import com.google.api.services.calendar.model.Events
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,15 +27,15 @@ class DetailsFragment: BaseFragment(R.layout.details_fragment) {
     }
 
     private fun subscribeObservers() {
-        viewModel.dataStateEvents.observe(viewLifecycleOwner, {
+        viewModel.dataStateEventData.observe(viewLifecycleOwner, {
             it?.let {
                 setUI(it)
             }
         })
     }
 
-    private fun setUI(events: Events) {
-        val ev = events.items.filter { event -> if (event.description == null) false else event.description.lowercase().contains("test") }
+    private fun setUI(events: List<EventData>) {
+        val ev = events.filter { event -> event.description.lowercase().contains("test") }
         binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(ev)
     }
 

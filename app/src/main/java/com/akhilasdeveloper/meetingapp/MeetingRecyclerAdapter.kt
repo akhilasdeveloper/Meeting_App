@@ -5,10 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.api.services.calendar.Calendar
-import com.google.api.services.calendar.model.Events
+import com.akhilasdeveloper.meetingapp.data.EventData
 
-class MeetingRecyclerAdapter(private val dataSet: Events) :
+class MeetingRecyclerAdapter(private val dataSet: List<EventData>) :
     RecyclerView.Adapter<MeetingRecyclerAdapter.ViewHolder>() {
 
     /**
@@ -38,27 +37,20 @@ class MeetingRecyclerAdapter(private val dataSet: Events) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        var start = dataSet.items[position].start.dateTime
-        var end = dataSet.items[position].end.dateTime
-        if (start == null) {
-            start = dataSet.items[position].start.date
-        }
-        if (end == null) {
-            end = dataSet.items[position].end.date
-        }
+
         viewHolder.meetingOrganizer.isSelected = true
-        viewHolder.meetingTitle.text = "${dataSet.items[position].summary?:"No title"}"
-        viewHolder.meetingOrganizer.text = "Organizer : ${dataSet.items[position].organizer.email}"
-        viewHolder.meetingDate.text = "Date : ${Utilities.formatMillis(start.value)}"
-        viewHolder.meetingFromTime.text = "${Utilities.formatMillisTime(start.value)}"
+        viewHolder.meetingTitle.text = dataSet[position].title
+        viewHolder.meetingOrganizer.text = "Organizer : ${dataSet[position].organizerEmail}"
+        viewHolder.meetingDate.text = "Date : ${Utilities.formatMillis(dataSet[position].startTime)}"
+        viewHolder.meetingFromTime.text = "${Utilities.formatMillisTime(dataSet[position].startTime)}"
         viewHolder.meetingToTime.text = "${
             Utilities.formatMillisTime(
-                end.value
+                dataSet[position].endTime
             )
         }"
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.items.size
+    override fun getItemCount() = dataSet.size
 
 }

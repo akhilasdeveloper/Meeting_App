@@ -1,0 +1,24 @@
+{
+  "meeting_rooms": [
+    {
+      "name": "Meeting Room 1",
+      "startColor": 12,
+      "endColor": 12
+    },
+    {
+      "name": "Meeting Room 2",
+      "startColor": 12,
+      "endColor": 12
+    },
+    {
+      "name": "Meeting Room 3",
+      "startColor": 12,
+      "endColor": 12
+    },
+    {
+      "name": "Meeting Room 4",
+      "startColor": 12,
+      "endColor": 12
+    }
+  ]
+}
