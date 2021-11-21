@@ -1,21 +1,25 @@
 {
   "meeting_rooms": [
     {
+      "id": 0,
       "name": "Meeting Room 1",
       "startColor": 3,
       "endColor": 3
     },
     {
+      "id": 1,
       "name": "Meeting Room 2",
       "startColor": 2,
       "endColor": 2
     },
     {
+      "id": 2,
       "name": "Meeting Room 3",
       "startColor": 1,
       "endColor": 1
     },
     {
+      "id": 3,
       "name": "Meeting Room 4",
       "startColor": 5,
       "endColor": 5

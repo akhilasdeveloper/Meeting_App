@@ -22,8 +22,12 @@
         <entry key="app/src/main/res/layout/details_item4.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/details_item5.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/display_fragment.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/meeting_color_item.xml" value="0.35260416666666666" />
+        <entry key="app/src/main/res/layout/meeting_room_color_popup_layout.xml" value="0.35260416666666666" />
+        <entry key="app/src/main/res/layout/meeting_room_item.xml" value="0.35260416666666666" />
+        <entry key="app/src/main/res/layout/meeting_room_name_popup_layout.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/meeting_time_layout.xml" value="0.35260416666666666" />
-        <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.35260416666666666" />
+        <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/text_row_item.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/time_scale_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/time_scale_line_half_layout.xml" value="0.35260416666666666" />

@@ -5,6 +5,7 @@ data class MeetingRoomData(
 )
 
 data class MeetingRoom(
+    val id: Long,
     val endColor: Int,
     val name: String,
     val startColor: Int

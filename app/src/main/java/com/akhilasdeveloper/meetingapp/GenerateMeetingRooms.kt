@@ -5,16 +5,17 @@ import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.akhilasdeveloper.meetingapp.data.MeetingRoom
 import com.akhilasdeveloper.meetingapp.data.MeetingRoomData
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
 
-class GenerateMeetingRooms (val context: Context, val gson: Gson) {
+class GenerateMeetingRooms(val context: Context, val gson: Gson) {
 
-    suspend fun fetchMeetingData():MeetingRoomData{
+    suspend fun fetchMeetingData(): MeetingRoomData {
         var data = read(Utilities.MEETING_ROOM_DATASTORE_KEY)
-        if (data == null){
+        if (data == null) {
             val fromFile = readDataFromFile()
             save(Utilities.MEETING_ROOM_DATASTORE_KEY, fromFile)
             data = fromFile
@@ -25,9 +26,55 @@ class GenerateMeetingRooms (val context: Context, val gson: Gson) {
         return topic
     }
 
-    suspend fun fetchDefaultMeetingRoomName():String{
+    suspend fun addMeetingRoomName(meetingRoom: MeetingRoom) {
+        val data = fetchMeetingData().meeting_rooms.toMutableList()
+        data.add(meetingRoom)
+        save(
+            Utilities.MEETING_ROOM_DATASTORE_KEY,
+            gson.toJson(MeetingRoomData(data))
+        )
+    }
+
+    suspend fun updateMeetingRoom(meetingRoom: MeetingRoom) {
+        val data = fetchMeetingData().meeting_rooms.toMutableList()
+        val updated = data.map { it ->
+            if (it.id == meetingRoom.id)
+                meetingRoom
+            else
+                it
+        }
+        save(
+            Utilities.MEETING_ROOM_DATASTORE_KEY,
+            gson.toJson(MeetingRoomData(updated))
+        )
+    }
+    suspend fun deleteMeetingRoom(meetingRoom: MeetingRoom) {
+        val data = fetchMeetingData().meeting_rooms.toMutableList()
+        data.removeAll { it -> it.id == meetingRoom.id }
+        save(
+            Utilities.MEETING_ROOM_DATASTORE_KEY,
+            gson.toJson(MeetingRoomData(data))
+        )
+    }
+
+    suspend fun updateDefaultMeetingRoom(meetingRoom: MeetingRoom) {
+        save(
+            Utilities.MEETING_ROOM_NAME_DATASTORE_KEY,
+            meetingRoom.name
+        )
+        saveInt(
+            Utilities.MEETING_ROOM_COL1_DATASTORE_KEY,
+            meetingRoom.startColor
+        )
+        saveInt(
+            Utilities.MEETING_ROOM_COL2_DATASTORE_KEY,
+            meetingRoom.endColor
+        )
+    }
+
+    suspend fun fetchDefaultMeetingRoomName(): String {
         var data = read(Utilities.MEETING_ROOM_NAME_DATASTORE_KEY)
-        if (data == null){
+        if (data == null) {
             val fromFile = readDataFromFile()
             save(Utilities.MEETING_ROOM_DATASTORE_KEY, fromFile)
             val topic = gson.fromJson(fromFile, MeetingRoomData::class.java)
@@ -39,9 +86,9 @@ class GenerateMeetingRooms (val context: Context, val gson: Gson) {
         return data
     }
 
-    suspend fun fetchDefaultMeetingRoomCol1():Int{
+    suspend fun fetchDefaultMeetingRoomCol1(): Int {
         var data = readInt(Utilities.MEETING_ROOM_COL1_DATASTORE_KEY)
-        if (data == null){
+        if (data == null) {
             val fromFile = readDataFromFile()
             save(Utilities.MEETING_ROOM_DATASTORE_KEY, fromFile)
             val topic = gson.fromJson(fromFile, MeetingRoomData::class.java)
@@ -53,9 +100,9 @@ class GenerateMeetingRooms (val context: Context, val gson: Gson) {
         return data
     }
 
-    suspend fun fetchDefaultMeetingRoomCol2():Int{
+    suspend fun fetchDefaultMeetingRoomCol2(): Int {
         var data = readInt(Utilities.MEETING_ROOM_COL2_DATASTORE_KEY)
-        if (data == null){
+        if (data == null) {
             val fromFile = readDataFromFile()
             save(Utilities.MEETING_ROOM_DATASTORE_KEY, fromFile)
             val topic = gson.fromJson(fromFile, MeetingRoomData::class.java)
@@ -67,31 +114,32 @@ class GenerateMeetingRooms (val context: Context, val gson: Gson) {
         return data
     }
 
-    private suspend fun readDataFromFile() = context.assets.open("meeting_rooms.json").bufferedReader().use {
-        it.readText()
-    }
+    private suspend fun readDataFromFile() =
+        context.assets.open("meeting_rooms.json").bufferedReader().use {
+            it.readText()
+        }
 
-    suspend fun save(key: String, value: String){
+    suspend fun save(key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
-        context.dataStore.edit {settings ->
+        context.dataStore.edit { settings ->
             settings[dataStoreKey] = value
         }
     }
 
-    suspend fun read(key: String): String?{
+    suspend fun read(key: String): String? {
         val dataStoreKey = stringPreferencesKey(key)
         val preferences = context.dataStore.data.first()
         return preferences[dataStoreKey]
     }
 
-    suspend fun saveInt(key: String, value: Int){
+    suspend fun saveInt(key: String, value: Int) {
         val dataStoreKey = intPreferencesKey(key)
-        context.dataStore.edit {settings ->
+        context.dataStore.edit { settings ->
             settings[dataStoreKey] = value
         }
     }
 
-    suspend fun readInt(key: String): Int?{
+    suspend fun readInt(key: String): Int? {
         val dataStoreKey = intPreferencesKey(key)
         val preferences = context.dataStore.data.first()
         return preferences[dataStoreKey]
