@@ -1,11 +1,21 @@
 package com.akhilasdeveloper.meetingapp
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import java.text.SimpleDateFormat
 import java.util.*
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 object Utilities {
 
     val DAY_MILLIS: Long = (1000 * 60 * 60 * 24).toLong()
+    val MEETING_ROOM_DATASTORE_KEY: String = "MEETING_ROOM_DATASTORE_KEY"
+    val MEETING_ROOM_NAME_DATASTORE_KEY: String = "MEETING_ROOM_NAME_DATASTORE_KEY"
+    val MEETING_ROOM_COL1_DATASTORE_KEY: String = "MEETING_ROOM_COL1_DATASTORE_KEY"
+    val MEETING_ROOM_COL2_DATASTORE_KEY: String = "MEETING_ROOM_COL2_DATASTORE_KEY"
 
     fun formatMillisDays(millis: Long): String {
         val seconds: Long = millis / 1000

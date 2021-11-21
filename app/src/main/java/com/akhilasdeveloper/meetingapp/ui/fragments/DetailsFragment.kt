@@ -35,8 +35,7 @@ class DetailsFragment: BaseFragment(R.layout.details_fragment) {
     }
 
     private fun setUI(events: List<EventData>) {
-        val ev = events.filter { event -> event.description.lowercase().contains("test") }
-        binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(ev)
+        binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(events)
     }
 
     private fun init() {

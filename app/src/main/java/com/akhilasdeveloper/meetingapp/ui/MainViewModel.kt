@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.akhilasdeveloper.meetingapp.GenerateMeetingRooms
 import com.akhilasdeveloper.meetingapp.Utilities
 import com.akhilasdeveloper.meetingapp.data.EventData
+import com.akhilasdeveloper.meetingapp.data.MeetingRoom
+import com.akhilasdeveloper.meetingapp.data.MeetingRoomData
 import com.akhilasdeveloper.meetingapp.repository.MeetingAppRepository
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
@@ -19,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel
 @Inject constructor(
-    private val meetingAppRepository: MeetingAppRepository
+    private val meetingAppRepository: MeetingAppRepository,
+    private val generateMeetingRooms: GenerateMeetingRooms
 ) : ViewModel() {
 
     private val _dataStateEvents: MutableLiveData<Events> = MutableLiveData()
@@ -50,8 +54,14 @@ class MainViewModel
     fun getEventData(calendar: Calendar, orderBy: String){
         viewModelScope.launch {
             while (true) {
+
+                val meetingRooms = generateMeetingRooms.fetchMeetingData()
+
                 meetingAppRepository.fetchDetails(calendar = calendar, orderBy = orderBy).collect {
-                    val data = it.items.map { map->
+
+                    val data = it.items.filter {
+                            event -> isMeetingRoom(meetingRooms, event.description)
+                    }.map { map->
 
                         val startTime = getStartTime(map)
                         val endTime = getEndTime(map)
@@ -62,7 +72,7 @@ class MainViewModel
                             title = map.summary?:"No title",
                             description = map.description?:"NA",
                             organizerEmail = map.organizer.email?:"Not found",
-                            meetingRoom = "test",
+                            meetingRoom = findMeetingRoom(meetingRooms,map.description),
                             startTime = startTime,
                             endTime = endTime,
                             startPer = getStartPer(startTime, startDay, endDay),
@@ -74,6 +84,28 @@ class MainViewModel
                 delay(Constants.REFRESH_DELAY)
             }
         }
+    }
+
+    private fun isMeetingRoom(meetingRooms: MeetingRoomData, description: String?): Boolean {
+        description?.let {
+            for (i in meetingRooms.meeting_rooms){
+                if (description.lowercase().contains(i.name.lowercase())){
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun findMeetingRoom(meetingRooms: MeetingRoomData, description: String?): MeetingRoom {
+        description?.let {
+            for (i in meetingRooms.meeting_rooms){
+                if (description.lowercase().contains(i.name.lowercase())){
+                    return i
+                }
+            }
+        }
+        return meetingRooms.meeting_rooms[0]
     }
 
     private fun getStartDay(start: Long) = Utilities.formatDateToMillis(Utilities.formatMillis(start))!!

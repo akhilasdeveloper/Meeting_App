@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.akhilasdeveloper.meetingapp.GenerateMeetingRooms
@@ -112,7 +113,9 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             setHasFixedSize(true)
         }
 
-        generateMeetingRooms.getMeetingRooms()
+       viewLifecycleOwner.lifecycleScope.launch {
+           binding.meetingRoomTitle.text = generateMeetingRooms.fetchDefaultMeetingRoomName()
+       }
 
     }
 
