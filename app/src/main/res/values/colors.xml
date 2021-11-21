@@ -24,4 +24,20 @@
 
     <color name="track">#fafafa</color>
 
+    <color name="start0">#F100AD</color>
+    <color name="end0">#F80057</color>
+    <color name="font0">#FFFFFF</color>
+    <color name="start1">#d81921</color>
+    <color name="end1">#F9631E</color>
+    <color name="font1">#FFFFFF</color>
+    <color name="start2">#007CDA</color>
+    <color name="end2">#37A4CF</color>
+    <color name="font2">#FFFFFF</color>
+    <color name="start3">#009F08</color>
+    <color name="end3">#8BD81E</color>
+    <color name="font3">#444444</color>
+    <color name="start4">#38009F</color>
+    <color name="end4">#971ED8</color>
+    <color name="font4">#FFFFFF</color>
+
 </resources>

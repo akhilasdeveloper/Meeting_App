@@ -11,6 +11,7 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.akhilasdeveloper.meetingapp.ColorDatas
 import com.akhilasdeveloper.meetingapp.GenerateMeetingRooms
 import com.akhilasdeveloper.meetingapp.MeetingRecyclerAdapter
 import com.akhilasdeveloper.meetingapp.R
@@ -30,6 +31,10 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import android.graphics.drawable.GradientDrawable
+
+
+
 
 @AndroidEntryPoint
 class DisplayFragment : BaseFragment(R.layout.display_fragment) {
@@ -42,6 +47,9 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
     @Inject
     lateinit var generateMeetingRooms: GenerateMeetingRooms
+
+    @Inject
+    lateinit var colorDatas: ColorDatas
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -115,8 +123,33 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
        viewLifecycleOwner.lifecycleScope.launch {
            binding.meetingRoomTitle.text = generateMeetingRooms.fetchDefaultMeetingRoomName()
+           setUIColor(generateMeetingRooms.fetchDefaultMeetingRoomCol1())
        }
+    }
 
+    private fun setUIColor(index: Int){
+        val i = if (colorDatas.colors.size <= index) 0 else index
+        val colorData = colorDatas.colors[i]
+        val gd = GradientDrawable(
+            GradientDrawable.Orientation.TR_BL, intArrayOf(colorData.start, colorData.end)
+        )
+        binding.meetingDetailsBackground.background = gd
+        binding.showAll.setBackgroundColor(colorData.start)
+        binding.settings.setBackgroundColor(colorData.end)
+        binding.showAll.setTextColor(colorData.font)
+        binding.settings.setTextColor(colorData.font)
+        binding.meetingName.setTextColor(colorData.font)
+        binding.nextMeeting.setTextColor(colorData.font)
+        binding.meetingTimeLayout.startLabel.setTextColor(colorData.font)
+        binding.meetingTimeLayout.endLabel.setTextColor(colorData.font)
+        binding.meetingTimeLayout.startTime.setTextColor(colorData.font)
+        binding.meetingTimeLayout.endTime.setTextColor(colorData.font)
+        binding.meetingTimeLayout.meetingOrganizer.setTextColor(colorData.font)
+        binding.divider1.setBackgroundColor(colorData.font)
+        binding.meetingTimeLayout.divider2.setBackgroundColor(colorData.font)
+        binding.meetingTimeLayout.divider3.setBackgroundColor(colorData.font)
+        binding.meetingTimeLayout.divider4.setBackgroundColor(colorData.font)
+        binding.meetingTimeLayout.divider5.setBackgroundColor(colorData.font)
     }
 
     private var resultLauncher =

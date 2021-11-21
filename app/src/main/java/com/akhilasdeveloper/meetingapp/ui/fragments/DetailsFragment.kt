@@ -7,16 +7,22 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.akhilasdeveloper.meetingapp.ColorDatas
 import com.akhilasdeveloper.meetingapp.MeetingListRecyclerAdapter
 import com.akhilasdeveloper.meetingapp.R
 import com.akhilasdeveloper.meetingapp.data.EventData
 import com.akhilasdeveloper.meetingapp.databinding.DetailsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailsFragment: BaseFragment(R.layout.details_fragment) {
+
     private var _binding: DetailsFragmentBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var colorDatas: ColorDatas
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +41,7 @@ class DetailsFragment: BaseFragment(R.layout.details_fragment) {
     }
 
     private fun setUI(events: List<EventData>) {
-        binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(events)
+        binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(events, colorDatas)
     }
 
     private fun init() {
