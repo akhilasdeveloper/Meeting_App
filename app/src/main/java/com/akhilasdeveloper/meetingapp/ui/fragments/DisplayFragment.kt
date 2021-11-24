@@ -34,8 +34,6 @@ import javax.inject.Inject
 import android.graphics.drawable.GradientDrawable
 
 
-
-
 @AndroidEntryPoint
 class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
@@ -64,17 +62,24 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
     private fun subscribeObservers() {
         viewModel.dataStateCalendar.observe(viewLifecycleOwner, {
             it?.let {
-                viewModel.getEventData(it, "startTime")
+                fetchEvents(it)
             }
         })
 
         viewModel.dataStateEventData.observe(viewLifecycleOwner, {
-            setUI(it)
+            it?.let {
+                setUI(it)
+            }
         })
 
         viewModel.dataStateLoading.observe(viewLifecycleOwner, {
             binding.progress.visibility = if (it) View.VISIBLE else View.GONE
         })
+    }
+
+    private fun fetchEvents(it: Calendar) {
+        if (viewModel.dataStateEventData.value == null)
+            viewModel.getEventData(it, "startTime")
     }
 
     private fun initSignIn() {
@@ -125,17 +130,25 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             setHasFixedSize(true)
         }
 
-       viewLifecycleOwner.lifecycleScope.launch {
-           binding.meetingRoomTitle.text = generateMeetingRooms.fetchDefaultMeetingRoomName()
-           setUIColor(generateMeetingRooms.fetchDefaultMeetingRoomCol1())
-           val startColor = generateMeetingRooms.fetchDefaultMeetingRoomCol1()
-           val i = if (colorDatas.colors.size <= startColor) 0 else startColor
-           val colorData = colorDatas.colors[i]
-           binding.progress.setIndicatorColor(colorData.start)
-       }
+        viewLifecycleOwner.lifecycleScope.launch {
+            binding.meetingRoomTitle.text = generateMeetingRooms.fetchDefaultMeetingRoomName()
+            setUIColor(generateMeetingRooms.fetchDefaultMeetingRoomCol1())
+            val startColor = generateMeetingRooms.fetchDefaultMeetingRoomCol1()
+            val i = if (colorDatas.colors.size <= startColor) 0 else startColor
+            val colorData = colorDatas.colors[i]
+            binding.progress.setIndicatorColor(colorData.start)
+        }
+
+        loadFromViewModel()
     }
 
-    private fun setUIColor(index: Int){
+    private fun loadFromViewModel() {
+        viewModel.dataStateEventData.value?.let {
+            setUI(it)
+        }
+    }
+
+    private fun setUIColor(index: Int) {
         val i = if (colorDatas.colors.size <= index) 0 else index
         val colorData = colorDatas.colors[i]
         val gd = GradientDrawable(
@@ -194,54 +207,53 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
         viewModel.setCalendar(driveBuilder.build())
 
-//        fetchDetails(calendar!!)
     }
 
-    /*private suspend fun fetchDetails(calendar: Calendar) {
+    private fun setUI(eventsData: List<EventData>) {
 
-        Timber.d("Called fetchDetails ${System.currentTimeMillis()}")
+        viewLifecycleOwner.lifecycleScope.launch {
 
-        val events: Events = calendar.events().list("primary")
-            .setTimeMin(DateTime(formatDateToMillis(formatMillis(System.currentTimeMillis()))!!))
-            .setOrderBy("startTime")
-            .setSingleEvents(true)
-            .execute()
+            val meetingRoom = generateMeetingRooms.fetchDefaultMeetingRoomName()
 
-        withContext(Dispatchers.Main) {
-            setUI(events)
-        }
-    }*/
-
-    private fun setUI(events: List<EventData>) {
-
-
-        if (events.isEmpty()) {
-            Timber.d("No upcoming events found")
-            binding.upcoming.text = getString(R.string.no_upcoming_meeting)
-            binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
-            binding.meetingName.text = getString(R.string.no_meeting)
-            binding.meetingTimeLayout.root.visibility = View.GONE
-            binding.meetingTimeLayout.meetingOrganizer.visibility = View.GONE
-        } else {
-            binding.upcoming.text = getString(R.string.upcoming_events)
-
-            var currEvent: EventData? = null
-            var nextEvent: EventData? = null
-            for (event in events) {
-
-                if (currEvent == null)
-                    if (event.startTime <= System.currentTimeMillis() && event.endTime >= System.currentTimeMillis())
-                        currEvent = event
-
-                if (nextEvent == null)
-                    if (event.startTime > System.currentTimeMillis())
-                        nextEvent = event
-
+            val events = eventsData.filter {
+                it.description.lowercase().contains(meetingRoom.lowercase())
             }
 
-            setMeeting(currEvent, nextEvent)
-            binding.recycler.adapter = MeetingRecyclerAdapter(events)
+            val mutEvents = events.toMutableList()
 
+            if (events.isEmpty()) {
+                Timber.d("No upcoming events found")
+                binding.upcoming.text = getString(R.string.no_upcoming_meeting)
+                binding.nextMeeting.text = getString(R.string.no_upcoming_meeting)
+                binding.meetingName.text = getString(R.string.no_meeting)
+                binding.meetingTimeLayout.root.visibility = View.GONE
+                binding.meetingTimeLayout.meetingOrganizer.visibility = View.GONE
+            } else {
+                binding.upcoming.text = getString(R.string.upcoming_events)
+
+                var currEvent: EventData? = null
+                var nextEvent: EventData? = null
+                for (event in events) {
+
+                    if (event.startTime < System.currentTimeMillis() && event.endTime < System.currentTimeMillis())
+                        mutEvents.remove(event)
+
+                    if (currEvent == null)
+                        if (event.startTime <= System.currentTimeMillis() && event.endTime >= System.currentTimeMillis())
+                            currEvent = event
+
+                    if (nextEvent == null)
+                        if (event.startTime > System.currentTimeMillis()) {
+                            nextEvent = event
+                            break
+                        }
+
+                }
+
+                mutEvents.remove(currEvent)
+                setMeeting(currEvent, nextEvent)
+                binding.recycler.adapter = MeetingRecyclerAdapter(mutEvents)
+            }
         }
     }
 
@@ -270,7 +282,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         }
         binding.meetingTimeLayout.meetingOrganizer.text = getString(
             R.string.organizer,
-            currEvent?.organizerEmail?: getString(R.string.no_organizer)
+            currEvent?.organizerEmail ?: getString(R.string.no_organizer)
         )
 
         if (nextEvent == null)
@@ -283,24 +295,5 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         }
 
     }
-
-/*
-
-    override fun onStart() {
-        super.onStart()
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                withContext(Dispatchers.Main) {
-                    binding.progress.visibility = View.VISIBLE
-                }
-
-                viewModel.dataStateCalendar.value?.let {
-                    viewModel.getEvents(it,"startTime")
-                }
-                delay(REFRESH_DELAY)
-            }
-        }
-    }
-*/
 
 }

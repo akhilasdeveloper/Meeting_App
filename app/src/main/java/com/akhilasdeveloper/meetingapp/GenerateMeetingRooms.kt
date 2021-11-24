@@ -7,6 +7,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.akhilasdeveloper.meetingapp.data.MeetingRoom
 import com.akhilasdeveloper.meetingapp.data.MeetingRoomData
+import com.akhilasdeveloper.meetingapp.ui.Constants.MEETING_ROOM_COLOR_UPDATE
+import com.akhilasdeveloper.meetingapp.ui.Constants.MEETING_ROOM_DEFAULT_UPDATE
+import com.akhilasdeveloper.meetingapp.ui.Constants.MEETING_ROOM_EXIST
+import com.akhilasdeveloper.meetingapp.ui.Constants.MEETING_ROOM_NAME_UPDATE
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
@@ -35,7 +39,9 @@ class GenerateMeetingRooms(val context: Context, val gson: Gson) {
         )
     }
 
-    suspend fun updateMeetingRoom(meetingRoom: MeetingRoom) {
+    suspend fun isMeetingRoomNameExist(meetingRoom: String):Boolean = fetchMeetingData().meeting_rooms.any { it.name == meetingRoom }
+
+    suspend fun updateMeetingRoom(meetingRoom: MeetingRoom):String {
         val data = fetchMeetingData().meeting_rooms.toMutableList()
         val updated = data.map { it ->
             if (it.id == meetingRoom.id)
@@ -49,6 +55,30 @@ class GenerateMeetingRooms(val context: Context, val gson: Gson) {
         )
         if (meetingRoom.name == fetchDefaultMeetingRoomName())
             updateDefaultMeetingRoom(meetingRoom)
+
+        return MEETING_ROOM_COLOR_UPDATE
+    }
+
+    suspend fun updateMeetingRoomName(meetingRoom: MeetingRoom):String {
+
+        if (isMeetingRoomNameExist(meetingRoom.name)){
+            return MEETING_ROOM_EXIST
+        }else {
+            val data = fetchMeetingData().meeting_rooms.toMutableList()
+            val updated = data.map { it ->
+                if (it.id == meetingRoom.id)
+                    meetingRoom
+                else
+                    it
+            }
+            save(
+                Utilities.MEETING_ROOM_DATASTORE_KEY,
+                gson.toJson(MeetingRoomData(updated))
+            )
+            if (meetingRoom.name == fetchDefaultMeetingRoomName())
+                updateDefaultMeetingRoom(meetingRoom)
+            return MEETING_ROOM_NAME_UPDATE
+        }
     }
 
     suspend fun deleteMeetingRoom(meetingRoom: MeetingRoom) {
@@ -60,7 +90,7 @@ class GenerateMeetingRooms(val context: Context, val gson: Gson) {
         )
     }
 
-    suspend fun updateDefaultMeetingRoom(meetingRoom: MeetingRoom) {
+    suspend fun updateDefaultMeetingRoom(meetingRoom: MeetingRoom):String {
         save(
             Utilities.MEETING_ROOM_NAME_DATASTORE_KEY,
             meetingRoom.name
@@ -73,6 +103,8 @@ class GenerateMeetingRooms(val context: Context, val gson: Gson) {
             Utilities.MEETING_ROOM_COL2_DATASTORE_KEY,
             meetingRoom.endColor
         )
+
+        return MEETING_ROOM_DEFAULT_UPDATE
     }
 
     suspend fun fetchDefaultMeetingRoomName(): String {
@@ -103,21 +135,7 @@ class GenerateMeetingRooms(val context: Context, val gson: Gson) {
         return data
     }
 
-    suspend fun fetchDefaultMeetingRoomCol2(): Int {
-        var data = readInt(Utilities.MEETING_ROOM_COL2_DATASTORE_KEY)
-        if (data == null) {
-            val fromFile = readDataFromFile()
-            save(Utilities.MEETING_ROOM_DATASTORE_KEY, fromFile)
-            val topic = gson.fromJson(fromFile, MeetingRoomData::class.java)
-            data = topic.meeting_rooms[0].startColor
-            saveInt(Utilities.MEETING_ROOM_COL2_DATASTORE_KEY, data)
-        }
-
-        Timber.d("json name %s", data)
-        return data
-    }
-
-    private suspend fun readDataFromFile() =
+    private fun readDataFromFile() =
         context.assets.open("meeting_rooms.json").bufferedReader().use {
             it.readText()
         }

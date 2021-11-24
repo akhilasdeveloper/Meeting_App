@@ -52,7 +52,18 @@
             android:visibility="gone"
             app:trackColor="@color/third"/>
 
-        <com.google.android.material.card.MaterialCardView
+        <TextClock
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:fontFamily="@font/open_sans_bold"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/system_for"
+            android:background="@color/third"
+            android:format12Hour="hh:mm a  dd MMM, yyyy"/>
+
+        <!--<com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -79,7 +90,7 @@
                     android:format12Hour="hh:mm a  dd MMM, yyyy"/>
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>-->
 
         <TextView
             android:layout_width="match_parent"

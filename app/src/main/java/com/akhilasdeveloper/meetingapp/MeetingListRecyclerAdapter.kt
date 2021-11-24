@@ -27,6 +27,7 @@ class MeetingListRecyclerAdapter(private val dataSet: List<EventData>, private v
         val meetingGuideFrom: Guideline = view.findViewById(R.id.guideline_from)
         val meetingGuideTo: Guideline = view.findViewById(R.id.guideline_to)
         val timeBackground: LinearLayout = view.findViewById(R.id.time_background)
+        val detailsItemBackground: LinearLayout = view.findViewById(R.id.details_item_background)
 
     }
 
@@ -63,6 +64,7 @@ class MeetingListRecyclerAdapter(private val dataSet: List<EventData>, private v
         viewHolder.meetingGuideFrom.setGuidelinePercent(dataSet[position].startPer)
         viewHolder.meetingGuideTo.setGuidelinePercent(dataSet[position].endPer)
         viewHolder.timeBackground.background = gd
+//        viewHolder.detailsItemBackground.background = gd
     }
 
     // Return the size of your dataset (invoked by the layout manager)

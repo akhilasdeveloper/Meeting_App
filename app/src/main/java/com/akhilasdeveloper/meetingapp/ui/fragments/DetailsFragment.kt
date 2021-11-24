@@ -46,11 +46,11 @@ class DetailsFragment: BaseFragment(R.layout.details_fragment) {
 
     private fun init() {
         WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.detailsRecycler) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.detailsLayout) { v, insets ->
             val systemWindows =
                 insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime())
-            binding.detailsRecycler.updatePadding(top = systemWindows.top)
-            binding.detailsRecycler.updatePadding(bottom = systemWindows.bottom)
+            binding.detailsLayout.updatePadding(top = systemWindows.top)
+            binding.detailsLayout.updatePadding(bottom = systemWindows.bottom)
             return@setOnApplyWindowInsetsListener insets
         }
 

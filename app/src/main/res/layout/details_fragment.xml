@@ -3,10 +3,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:animateLayoutChanges="true"
     android:background="@color/first"
     android:id="@+id/detailsLayout"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+
+        <TextView
+            android:id="@+id/meeting_room"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/open_sans_bold"
+            android:text="All Events"
+            android:textColor="@color/system_for"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/addNewMeeting"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_twotone_calendar_today_24"
+            app:tint="@color/system_for" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/meeting_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="24 Nov 2021"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/system_for"
+        android:background="@color/third"/>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:layout_width="match_parent"

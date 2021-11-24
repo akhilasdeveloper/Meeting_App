@@ -40,20 +40,8 @@ class MainViewModel
     val dataStateCalendar: LiveData<Calendar?>
         get() = _dataStateCalendar
 
-    val dataStateEventData: LiveData<List<EventData>>
+    val dataStateEventData: LiveData<List<EventData>?>
         get() = _dataStateEventData
-
-    fun getEvents(calendar: Calendar, orderBy: String){
-        viewModelScope.launch {
-            while (true) {
-                meetingAppRepository.fetchDetails(calendar = calendar, orderBy = orderBy).collect {
-                    Timber.d("MainViewModel : getEvents")
-                    _dataStateEvents.value = it
-                }
-                delay(Constants.REFRESH_DELAY)
-            }
-        }
-    }
 
     fun getEventData(calendar: Calendar, orderBy: String){
         viewModelScope.launch {

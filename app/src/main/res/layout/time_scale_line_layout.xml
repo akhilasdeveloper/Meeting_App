@@ -7,6 +7,6 @@
     <View
         android:layout_width=".5dp"
         android:layout_height="wrap_content"
-        android:background="@color/system_for" />
+        android:background="@color/track" />
 
 </LinearLayout>

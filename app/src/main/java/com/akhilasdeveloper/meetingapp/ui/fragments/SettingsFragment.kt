@@ -15,6 +15,7 @@ import javax.inject.Inject
 import android.graphics.drawable.ColorDrawable
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import com.akhilasdeveloper.meetingapp.*
@@ -113,7 +114,8 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
 
     override fun onItemRadioSelected(meetingRoom: MeetingRoom, position: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
-            generateMeetingRooms.updateDefaultMeetingRoom(meetingRoom)
+            val msg = generateMeetingRooms.updateDefaultMeetingRoom(meetingRoom)
+            displayToast(msg)
             refreshUI()
         }
     }
@@ -133,7 +135,8 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
                 if (!text.isNullOrEmpty())
                     viewLifecycleOwner.lifecycleScope.launch {
                         val saveData = MeetingRoom(name = text, startColor = meetingRoom.startColor, endColor = meetingRoom.endColor, id = meetingRoom.id)
-                        generateMeetingRooms.updateMeetingRoom(saveData)
+                        val msg = generateMeetingRooms.updateMeetingRoomName(saveData)
+                        displayToast(msg)
                         refreshUI()
                         dialog.dismiss()
                     }
@@ -167,10 +170,15 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
 
     override fun onItemColorSelectorClicked(meetingRoom: MeetingRoom, position: Int, alertDialog: AlertDialog) {
         viewLifecycleOwner.lifecycleScope.launch {
-            generateMeetingRooms.updateMeetingRoom(meetingRoom)
+            val msg = generateMeetingRooms.updateMeetingRoom(meetingRoom)
+            displayToast(msg)
             refreshUI()
             alertDialog.dismiss()
         }
+    }
+
+    private fun displayToast(message: String){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 }
