@@ -32,6 +32,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import android.graphics.drawable.GradientDrawable
+import android.widget.Toast
 
 
 @AndroidEntryPoint
@@ -69,6 +70,12 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         viewModel.dataStateEventData.observe(viewLifecycleOwner, {
             it?.let {
                 setUI(it)
+            }
+        })
+
+        viewModel.dataStateMessage.observe(viewLifecycleOwner, {
+            it?.let {
+                displayToast(it)
             }
         })
 
@@ -145,6 +152,10 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
     private fun loadFromViewModel() {
         viewModel.dataStateEventData.value?.let {
             setUI(it)
+        }?:kotlin.run{
+            viewModel.dataStateCalendar.value?.let {
+                viewModel.getEventDataWithoutLoop(it,"startTime")
+            }
         }
     }
 
@@ -294,6 +305,10 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             )
         }
 
+    }
+
+    private fun displayToast(message: String){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 }

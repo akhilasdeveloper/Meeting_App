@@ -10,6 +10,7 @@ import com.akhilasdeveloper.meetingapp.data.EventData
 import com.akhilasdeveloper.meetingapp.data.MeetingRoom
 import com.akhilasdeveloper.meetingapp.data.MeetingRoomData
 import com.akhilasdeveloper.meetingapp.repository.MeetingAppRepository
+import com.akhilasdeveloper.meetingapp.ui.Constants.NETWORK_ERROR
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.Events
@@ -26,13 +27,17 @@ class MainViewModel
     private val generateMeetingRooms: GenerateMeetingRooms
 ) : ViewModel() {
 
-    private val _dataStateEvents: MutableLiveData<Events> = MutableLiveData()
+    private val _dataStateIsStarted: MutableLiveData<Boolean> = MutableLiveData()
     private val _dataStateEventData: MutableLiveData<List<EventData>> = MutableLiveData()
     private val _dataStateCalendar: MutableLiveData<Calendar?> = MutableLiveData()
     private val _dataStateLoading: MutableLiveData<Boolean> = MutableLiveData()
+    private val _dataStateMessage: MutableLiveData<String?> = MutableLiveData()
 
-    val dataStateEvents: LiveData<Events>
-        get() = _dataStateEvents
+    val dataStateIsStarted: LiveData<Boolean>
+        get() = _dataStateIsStarted
+
+    val dataStateMessage: LiveData<String?>
+        get() = _dataStateMessage
 
     val dataStateLoading: LiveData<Boolean>
         get() = _dataStateLoading
@@ -48,36 +53,54 @@ class MainViewModel
             while (true) {
 
                 setLoading(true)
-
-                val meetingRooms = generateMeetingRooms.fetchMeetingData()
-
-                meetingAppRepository.fetchDetails(calendar = calendar, orderBy = orderBy).collect {
-
-                    val data = it.items.filter {
-                            event -> isMeetingRoom(meetingRooms, event.description)
-                    }.map { map->
-
-                        val startTime = getStartTime(map)
-                        val endTime = getEndTime(map)
-                        val startDay = getStartDay(startTime)
-                        val endDay = getEndDay(endTime)
-
-                        EventData(
-                            title = map.summary?:"No title",
-                            description = map.description?:"NA",
-                            organizerEmail = map.organizer.email?:"Not found",
-                            meetingRoom = findMeetingRoom(meetingRooms,map.description),
-                            startTime = startTime,
-                            endTime = endTime,
-                            startPer = getStartPer(startTime, startDay, endDay),
-                            endPer = getEndPer(endTime, startDay, endDay)
-                        )
-                    }
-                    setLoading(false)
-                    _dataStateEventData.value = data
-                }
+                setIsStarted(true)
+                getEventDataFromRepository(calendar, orderBy)
                 delay(Constants.REFRESH_DELAY)
             }
+        }
+    }
+
+    fun getEventDataWithoutLoop(calendar: Calendar, orderBy: String){
+        setLoading(true)
+        viewModelScope.launch {
+            getEventDataFromRepository(calendar, orderBy)
+        }
+    }
+
+    suspend fun getEventDataFromRepository(calendar: Calendar, orderBy: String){
+        val meetingRooms = generateMeetingRooms.fetchMeetingData()
+
+        try {
+            meetingAppRepository.fetchDetails(calendar = calendar, orderBy = orderBy).collect {
+
+                val data = it.items.filter {
+                        event -> isMeetingRoom(meetingRooms, event.description)
+                }.map { map->
+
+                    val startTime = getStartTime(map)
+                    val endTime = getEndTime(map)
+                    val startDay = getStartDay(startTime)
+                    val endDay = getEndDay(endTime)
+
+                    EventData(
+                        title = map.summary?:"No title",
+                        description = map.description?:"NA",
+                        organizerEmail = map.organizer.email?:"Not found",
+                        meetingRoom = findMeetingRoom(meetingRooms,map.description),
+                        startTime = startTime,
+                        endTime = endTime,
+                        startPer = getStartPer(startTime, startDay, endDay),
+                        endPer = getEndPer(endTime, startDay, endDay)
+                    )
+                }
+                setLoading(false)
+                _dataStateEventData.value = data
+                setMessage(null)
+            }
+        }catch (e: Exception){
+            Timber.e(e.toString())
+            setLoading(false)
+            setMessage(NETWORK_ERROR)
         }
     }
 
@@ -135,14 +158,26 @@ class MainViewModel
     }
 
     fun setCalendar(calendar: Calendar){
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             _dataStateCalendar.value = calendar
         }
     }
 
     fun setLoading(boolean: Boolean){
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             _dataStateLoading.value = boolean
+        }
+    }
+
+    fun setIsStarted(boolean: Boolean){
+        viewModelScope.launch {
+            _dataStateLoading.value = boolean
+        }
+    }
+
+    fun setMessage(message: String?){
+        viewModelScope.launch {
+            _dataStateMessage.value = message
         }
     }
 
