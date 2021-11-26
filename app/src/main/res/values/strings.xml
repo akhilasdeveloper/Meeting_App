@@ -6,6 +6,7 @@
     <string name="upcoming_events">Upcoming Events</string>
     <string name="next_meeting">Next meeting in %1$s</string>
     <string name="organizer">Organizer : %1$s</string>
+    <string name="date">Date : %1$s</string>
     <string name="no_title">No Title</string>
     <string name="no_organizer">Organizer not found</string>
     <string name="current_event">Current Event</string>

@@ -49,4 +49,35 @@
     <color name="end7">#1ED8BC</color>
     <color name="font7">#333333</color>
 
+    <color name="start8">#134E5E</color>
+    <color name="end8">#71B280</color>
+    <color name="font8">#ffffff</color>
+    <color name="start9">#4776E6</color>
+    <color name="end9">#8E54E9</color>
+    <color name="font9">#ffffff</color>
+    <color name="start10">#EB3349</color>
+    <color name="end10">#F45C43</color>
+    <color name="font10">#ffffff</color>
+    <color name="start11">#ad5389</color>
+    <color name="end11">#3c1053</color>
+    <color name="font11">#ffffff</color>
+    <color name="start12">#4e54c8</color>
+    <color name="end12">#8f94fb</color>
+    <color name="font12">#ffffff</color>
+    <color name="start13">#0f0c29</color>
+    <color name="end13">#302b63</color>
+    <color name="font13">#ffffff</color>
+    <color name="start14">#e52d27</color>
+    <color name="end14">#b31217</color>
+    <color name="font14">#ffffff</color>
+    <color name="start15">#9796f0</color>
+    <color name="end15">#fbc7d4</color>
+    <color name="font15">#444444</color>
+    <color name="start16">#B79891</color>
+    <color name="end16">#94716B</color>
+    <color name="font16">#ffffff</color>
+    <color name="start17">#799F0C</color>
+    <color name="end17">#FFE000</color>
+    <color name="font17">#333333</color>
+
 </resources>

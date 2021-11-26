@@ -22,6 +22,7 @@ import com.akhilasdeveloper.meetingapp.*
 import com.akhilasdeveloper.meetingapp.data.MeetingRoom
 import com.akhilasdeveloper.meetingapp.databinding.MeetingRoomColorPopupLayoutBinding
 import com.akhilasdeveloper.meetingapp.databinding.MeetingRoomNamePopupLayoutBinding
+import com.akhilasdeveloper.meetingapp.ui.Constants.MEETING_SORT_BY
 
 
 @AndroidEntryPoint
@@ -98,6 +99,7 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
     }
 
     private fun refreshUI(){
+        refreshData()
         viewLifecycleOwner.lifecycleScope.launch {
             binding.meetingRoomsRecycler.adapter = MeetingRoomRecyclerAdapter(
                 generateMeetingRooms.fetchMeetingData().meeting_rooms,
@@ -139,6 +141,7 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
                         displayToast(msg)
                         refreshUI()
                         dialog.dismiss()
+
                     }
             }
         }
@@ -163,7 +166,6 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
             adapter = MeetingRoomColorRecyclerAdapter(colorDatas,meetingRoom,dialog,this@SettingsFragment)
         }
         dialog.show()
-
         alertCustomdialog.meetingRoomNamePopupEditCancel.setOnClickListener(View.OnClickListener { dialog.dismiss() })
 
     }
@@ -175,6 +177,10 @@ class SettingsFragment : BaseFragment(R.layout.settings_fragment), MeetingRoomCl
             refreshUI()
             alertDialog.dismiss()
         }
+    }
+
+    private fun refreshData(){
+        viewModel.getEventDataWithoutLoop(MEETING_SORT_BY)
     }
 
     private fun displayToast(message: String){

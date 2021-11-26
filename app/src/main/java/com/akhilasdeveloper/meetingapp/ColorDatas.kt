@@ -45,6 +45,56 @@ class ColorDatas(val context: Context) {
             start = ContextCompat.getColor(context, R.color.start7),
             end = ContextCompat.getColor(context, R.color.end7),
             font = ContextCompat.getColor(context, R.color.font7)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start8),
+            end = ContextCompat.getColor(context, R.color.end8),
+            font = ContextCompat.getColor(context, R.color.font8)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start9),
+            end = ContextCompat.getColor(context, R.color.end9),
+            font = ContextCompat.getColor(context, R.color.font9)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start10),
+            end = ContextCompat.getColor(context, R.color.end10),
+            font = ContextCompat.getColor(context, R.color.font10)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start11),
+            end = ContextCompat.getColor(context, R.color.end11),
+            font = ContextCompat.getColor(context, R.color.font11)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start12),
+            end = ContextCompat.getColor(context, R.color.end12),
+            font = ContextCompat.getColor(context, R.color.font12)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start13),
+            end = ContextCompat.getColor(context, R.color.end13),
+            font = ContextCompat.getColor(context, R.color.font13)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start14),
+            end = ContextCompat.getColor(context, R.color.end14),
+            font = ContextCompat.getColor(context, R.color.font14)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start15),
+            end = ContextCompat.getColor(context, R.color.end15),
+            font = ContextCompat.getColor(context, R.color.font15)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start16),
+            end = ContextCompat.getColor(context, R.color.end16),
+            font = ContextCompat.getColor(context, R.color.font16)
+        ),
+        ColorData(
+            start = ContextCompat.getColor(context, R.color.start17),
+            end = ContextCompat.getColor(context, R.color.end17),
+            font = ContextCompat.getColor(context, R.color.font17)
         )
     )
 }

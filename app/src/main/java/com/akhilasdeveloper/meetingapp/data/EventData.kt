@@ -8,5 +8,6 @@ data class EventData(
     val startTime: Long,
     val endTime: Long,
     val startPer: Float,
-    val endPer: Float
+    val endPer: Float,
+    val isValid: Boolean
 )

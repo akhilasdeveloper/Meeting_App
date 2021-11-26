@@ -41,7 +41,7 @@ class DetailsFragment: BaseFragment(R.layout.details_fragment) {
     }
 
     private fun setUI(events: List<EventData>) {
-        binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(events, colorDatas)
+        binding.detailsRecycler.adapter = MeetingListRecyclerAdapter(events, colorDatas,requireContext())
     }
 
     private fun init() {

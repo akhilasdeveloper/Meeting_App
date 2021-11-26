@@ -33,6 +33,7 @@ import java.util.*
 import javax.inject.Inject
 import android.graphics.drawable.GradientDrawable
 import android.widget.Toast
+import com.akhilasdeveloper.meetingapp.ui.Constants.MEETING_SORT_BY
 
 
 @AndroidEntryPoint
@@ -86,7 +87,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
     private fun fetchEvents(it: Calendar) {
         if (viewModel.dataStateEventData.value == null)
-            viewModel.getEventData(it, "startTime")
+            viewModel.getEventData(it, MEETING_SORT_BY)
     }
 
     private fun initSignIn() {
@@ -153,9 +154,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         viewModel.dataStateEventData.value?.let {
             setUI(it)
         }?:kotlin.run{
-            viewModel.dataStateCalendar.value?.let {
-                viewModel.getEventDataWithoutLoop(it,"startTime")
-            }
+            viewModel.getEventDataWithoutLoop(MEETING_SORT_BY)
         }
     }
 
@@ -163,7 +162,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         val i = if (colorDatas.colors.size <= index) 0 else index
         val colorData = colorDatas.colors[i]
         val gd = GradientDrawable(
-            GradientDrawable.Orientation.TR_BL, intArrayOf(colorData.start, colorData.end)
+            GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(colorData.start, colorData.end)
         )
         binding.meetingDetailsBackground.background = gd
         binding.showAll.setBackgroundColor(colorData.start)
@@ -227,7 +226,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
             val meetingRoom = generateMeetingRooms.fetchDefaultMeetingRoomName()
 
             val events = eventsData.filter {
-                it.description.lowercase().contains(meetingRoom.lowercase())
+                it.description.lowercase().contains(meetingRoom.lowercase()) && it.isValid
             }
 
             val mutEvents = events.toMutableList()
@@ -263,7 +262,7 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
 
                 mutEvents.remove(currEvent)
                 setMeeting(currEvent, nextEvent)
-                binding.recycler.adapter = MeetingRecyclerAdapter(mutEvents)
+                binding.recycler.adapter = MeetingRecyclerAdapter(mutEvents,requireContext())
             }
         }
     }
