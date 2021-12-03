@@ -28,7 +28,7 @@ class MainViewModel
 @Inject constructor(
     private val meetingAppRepository: MeetingAppRepository,
     private val generateMeetingRooms: GenerateMeetingRooms,
-    @ApplicationContext val context: Context
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _dataStateEventData: MutableLiveData<List<EventData>> = MutableLiveData()
