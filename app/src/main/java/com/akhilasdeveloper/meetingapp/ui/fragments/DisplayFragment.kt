@@ -187,6 +187,8 @@ class DisplayFragment : BaseFragment(R.layout.display_fragment) {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 initSignIn()
+            }else{
+                Timber.d("Sign in failed $result")
             }
         }
 
